@@ -16,6 +16,9 @@ function(WebGL){
                 },
 
                 render: function(shader) {
+                    //Exit if not visible
+                    if(!_visible) return;
+
                     //Assign the buffers
                     WebGL.pointAttrib(shader.getAttribute("aPos"), _posBuf.getBuffer());
 
@@ -51,9 +54,13 @@ function(WebGL){
 
                 setModelTransform: function(modelTransform) {
                     _modelTransform = modelTransform;
-                }
+                },
+
+                setVisible: function(visible) { _visible = visible; },
+                getVisible: function() { return _visible; },
             };
 
+            var _visible = true;
             var _posBuf;
             var _indBuf;
             var _pickListeners = [];

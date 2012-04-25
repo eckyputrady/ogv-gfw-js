@@ -27,23 +27,28 @@ function(WebGL){
                     if(val_0) _polygonOffset[0] = val_0;
                     if(val_1) _polygonOffset[1] = val_1;
                 },
-
+                setVisible: function(visible) { _visible = visible; },
+                getVisible: function() { return _visible; },
                 setTexture: function(texture) { _texture = texture; },
-
                 setModelTransform: function(modelTrans) { _modelTransform = modelTrans; },
-
                 setColorAmbient: function(color) { _color.ambient = color; },
                 setColorDiffuse: function(color) { _color.diffuse = color; },
                 setColorSpecular: function(color) { _color.specular = color; },
                 setSpecPow: function(pow) { _color.specPow = pow; },
+                getColorAmbient: function() { return _color.ambient; },
+                getColorDiffuse: function() { return _color.diffuse; },
+                getColorSpecular: function() { return _color.specular; },
+                getSpecPow: function() { return _color.specPow; },
 
                 /**
                  * Call this to draw to the screen
                  */
                 render: function(shader) {
+                    //Exit if not visible
+                    if(!_visible) return;
+
                     //Assign the buffers
                     WebGL.pointAttrib(shader.getAttribute("aPos"), _posBuf.getBuffer());
-                    WebGL.pointAttrib(shader.getAttribute("aTex"), _texBuf.getBuffer());
                     WebGL.pointAttrib(shader.getAttribute("aNor"), _norBuf.getBuffer());
 
                     //Model transform
@@ -59,13 +64,20 @@ function(WebGL){
                         gl.bindTexture(gl.TEXTURE_2D, _texture.getGLTex());
                         gl.uniform1i(shader.getUniform("sampler_0"), 0);
                         gl.uniform1i(shader.getUniform("useTexture"), 1);
+                        WebGL.pointAttrib(shader.getAttribute("aTex"), _texBuf.getBuffer());
                     } else {
-                        gl.uniform4fv(shader.getUniform("uMAmbient"), _color.ambient);
-                        gl.uniform4fv(shader.getUniform("uMDiffuse"), _color.diffuse);
-                        gl.uniform4fv(shader.getUniform("uMSpecular"), _color.specular);
-                        gl.uniform1f(shader.getUniform("uMSpecPow"), _color.specPow);
+                        //for unknown reason, this has to be assigned if there is render batch
+                        //that use texture (prev if condition applied)
+                        //otherwise, there will be nothing drawn
+                        WebGL.pointAttrib(shader.getAttribute("aTex"), _posBuf.getBuffer());
                         gl.uniform1i(shader.getUniform("useTexture"), 0);
                     }
+
+                    //Materials
+                    gl.uniform4fv(shader.getUniform("uMAmbient"), _color.ambient);
+                    gl.uniform4fv(shader.getUniform("uMDiffuse"), _color.diffuse);
+                    gl.uniform4fv(shader.getUniform("uMSpecular"), _color.specular);
+                    gl.uniform1f(shader.getUniform("uMSpecPow"), _color.specPow);
 
                     //Polygon offset
                     if(_isPolyOffsetActive) {
@@ -85,6 +97,7 @@ function(WebGL){
             };
 
             //Privates
+            var _visible = true;
             var _polygonOffset = [0,0];
             var _isPolyOffsetActive;
             var _texture;
@@ -96,7 +109,7 @@ function(WebGL){
             var _color = {
                 ambient: [0.5, 0.5, 0.5, 1.0],
                 diffuse: [Math.random(), Math.random(), Math.random(), 1.0],
-                specular: [Math.random(), Math.random(), Math.random(), 1.0],
+                specular: [1.0, 1.0, 1.0, 1.0],
                 specPow: 50,
             };
 

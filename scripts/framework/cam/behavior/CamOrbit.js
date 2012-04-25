@@ -43,13 +43,20 @@ define(
 						
                         //target position
                         else {
+                            //Assign shorthand vars
                             var t = _inst.target;
                             var c = _inst.cam;
                             var temp = vec3.create();
+
+                            //Left right movement
                             var dx = vec3.scale(c.right, delta * input.deltaPos[0] * 50, temp);
                             vec3.add(t, dx);
+
+                            //Copy forward to temp, zero the y component
                             var dz = vec3.scale(c.forward, 1, temp);
                             dz[1] = 0;
+
+                            //Forward & backward movement
                             vec3.normalize(dz);
                             vec3.scale(dz, delta * input.deltaPos[1] * 50);
                             vec3.add(t, dz);

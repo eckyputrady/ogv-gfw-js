@@ -19,20 +19,13 @@ function(WebGL){
                     throw "not implemented yet!";
                 },
 
-                setPolyOffset: function(active, val_0, val_1) {
-                    _isPolyOffsetActive = active;
-                    if(val_0) _polygonOffset[0] = val_0;
-                    if(val_1) _polygonOffset[1] = val_1;
-                },
-
-                setColor: function(color) { _color = color; },
-
-                setModelTransform: function(modelTrans) { _modelTransform = modelTrans; },
-
                 /**
                  * Call this to draw to the screen
                  */
                 render: function(shader) {
+                    //Exit if not visible
+                    if(!_visible) return;
+
                     //Assign the buffers
                     WebGL.pointAttrib(shader.getAttribute("aPos"), _posBuf.getBuffer());
 
@@ -59,10 +52,22 @@ function(WebGL){
                     if(_isPolyOffsetActive) {
                         gl.disable(gl.POLYGON_OFFSET_FILL);
                     }
-                }
+                },
+
+                setPolyOffset: function(active, val_0, val_1) {
+                    _isPolyOffsetActive = active;
+                    if(val_0) _polygonOffset[0] = val_0;
+                    if(val_1) _polygonOffset[1] = val_1;
+                },
+                setColor: function(color) { _color = color; },
+                setModelTransform: function(modelTrans) { _modelTransform = modelTrans; },
+                setVisible: function(visible) { _visible = visible; },
+                getVisible: function() { return _visible; },
+
             };
 
             //Privates
+            var _visible = true;
             var _polygonOffset = [0,0];
             var _isPolyOffsetActive;
             var _posBuf;

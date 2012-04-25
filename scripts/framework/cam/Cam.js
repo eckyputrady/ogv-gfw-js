@@ -29,7 +29,7 @@ define(
                         vec3.normalize(this.right);
                     },
 
-                    updateView: function() {
+                    updateProj: function() {
                         if(_self.isOrtho)
                             mat4.ortho(_self.orthoL, _self.orthoR, _self.orthoB, _self.orthoT, _self.near, _self.far, _proj);
                         else
@@ -48,7 +48,7 @@ define(
                 var _proj   = mat4.create();
                 var _view   = mat4.create();
 
-                _self.updateView();
+                _self.updateProj();
                 _self.update();
 
                 return _self;
